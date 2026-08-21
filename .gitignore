@@ -22,3 +22,46 @@ dist-ssr
 *.njsproj
 *.sln
 *.sw?
+
+# ---------------------------------------------
+# Python / Backend Overrides
+# ---------------------------------------------
+venv/
+backend/venv/
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+.Python
+env/
+pip-log.txt
+pip-delete-this-directory.txt
+
+# ---------------------------------------------
+# Secrets & Environment Variables (CRITICAL)
+# ---------------------------------------------
+.env
+backend/.env
+.env.local
+.env.development.local
+.env.test.local
+.env.production.local
+
+# ---------------------------------------------
+# Databases & Uploads
+# ---------------------------------------------
+*.sqlite3
+*.db
+civic.db
+backend/civic.db
+uploads/
+backend/uploads/
+
+# ---------------------------------------------
+# AI Agent Meta-files
+# ---------------------------------------------
+.agents/
+.claude/
+.planning/
+reticle-full.md
+skills-lock.json

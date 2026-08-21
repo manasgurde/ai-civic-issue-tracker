@@ -3,6 +3,14 @@ uvicorn
 sqlalchemy
 passlib[bcrypt]
 python-jose[cryptography]
+pydantic[email]
 python-multipart
+google-genai
+python-dotenv
 pydantic
 pydantic-settings
+apscheduler
+
+cloudinary==1.40.0
+
+psycopg2-binary==2.9.9
