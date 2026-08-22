@@ -102,7 +102,7 @@ export default function WorkerDashboard() {
   const awaitingApproval = complaints.filter(c => c.status === 'pending_approval').length;
 
   return (
-    <Layout user={user} pageTitle="My Assignments" pageSubtitle="Complaints assigned to you by admin">
+    <Layout user={user} pageTitle="My Assignments" pageSubtitle={user?.city_name ? user.city_name : "Field Operations"}>
       <div className="stat-grid">
         {[
           { label: 'Total', value: total, icon: 'assignment', color: 'indigo' },

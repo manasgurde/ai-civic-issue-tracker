@@ -78,7 +78,7 @@ export default function AdminDashboard() {
   ].filter(d => d.value > 0);
 
   return (
-    <Layout user={user} pageTitle="Admin Dashboard" pageSubtitle={`Bhopal, MP, India · Overview`}>
+    <Layout user={user} pageTitle="Admin Dashboard" pageSubtitle={user.city_name ? `${user.city_name} — City Overview` : "City Overview"}>
       <div className="stat-grid">
         <div className="stat-card">
           <div className="stat-icon indigo"><span className="material-symbols-outlined">report_problem</span></div>

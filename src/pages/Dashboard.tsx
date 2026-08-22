@@ -76,7 +76,7 @@ export default function Dashboard() {
     : complaints.filter(c => c.status === activeTab);
 
   return (
-    <Layout user={user} pageTitle="My Dashboard" pageSubtitle="Track and manage your civic complaints">
+    <Layout user={user} pageTitle="My Dashboard" pageSubtitle={`${user.city_name ? `📍 ${user.city_name}` : 'Track and manage your civic complaints'}`}>
       {/* Stat Cards */}
       <div className="stat-grid">
         <div className="stat-card">

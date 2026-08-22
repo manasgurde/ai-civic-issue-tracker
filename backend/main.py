@@ -127,6 +127,7 @@ class UserResponse(BaseModel):
     name: Optional[str] = None
     preferences: dict
     city_id: int
+    city_name: Optional[str] = None
     model_config = {"from_attributes": True}
 
 class UserPublic(BaseModel):
@@ -251,7 +252,16 @@ def register(user: UserCreate, db: Session = Depends(get_db)):
     db.add(db_user)
     db.commit()
     db.refresh(db_user)
-    return db_user
+    city = db.query(CityDB).filter(CityDB.id == db_user.city_id).first()
+    return UserResponse(
+        id=db_user.id,
+        email=db_user.email,
+        role=db_user.role,
+        name=db_user.name,
+        preferences=db_user.preferences or {},
+        city_id=db_user.city_id,
+        city_name=city.name if city else None,
+    )
 
 @app.post("/auth/login", response_model=Token)
 def login(form_data: OAuth2PasswordRequestForm = Depends(), db: Session = Depends(get_db)):
@@ -262,8 +272,17 @@ def login(form_data: OAuth2PasswordRequestForm = Depends(), db: Session = Depend
     return {"access_token": access_token, "token_type": "bearer"}
 
 @app.get("/users/me", response_model=UserResponse)
-def read_users_me(current_user: UserDB = Depends(get_current_user)):
-    return current_user
+def read_users_me(current_user: UserDB = Depends(get_current_user), db: Session = Depends(get_db)):
+    city = db.query(CityDB).filter(CityDB.id == current_user.city_id).first()
+    return UserResponse(
+        id=current_user.id,
+        email=current_user.email,
+        role=current_user.role,
+        name=current_user.name,
+        preferences=current_user.preferences or {},
+        city_id=current_user.city_id,
+        city_name=city.name if city else None,
+    )
 
 @app.put("/users/me", response_model=UserResponse)
 def update_users_me(prefs: PreferencesUpdate, current_user: UserDB = Depends(get_current_user), db: Session = Depends(get_db)):
