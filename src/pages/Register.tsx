@@ -16,8 +16,9 @@ export default function Register() {
   const [password, setPassword] = useState('');
   const [confirm, setConfirm] = useState('');
   const [accessCode, setAccessCode] = useState('');
-  const [cityId, setCityId] = useState('1');
+  const [cityId, setCityId] = useState('');
   const [cities, setCities] = useState<any[]>([]);
+  const [selectedState, setSelectedState] = useState('');
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
@@ -26,9 +27,35 @@ export default function Register() {
   useEffect(() => {
     fetch(`${import.meta.env.VITE_API_URL || 'http://localhost:8000'}/cities`)
       .then(r => r.json())
-      .then(data => { setCities(data); if (data.length > 0) setCityId(data[0].id.toString()); })
+      .then(data => { 
+        setCities(data); 
+        if (data.length > 0) {
+          const firstState = data[0].state || 'Unknown';
+          setSelectedState(firstState);
+          const stateCities = data.filter((c: any) => c.state === firstState);
+          if (stateCities.length > 0) {
+            setCityId(stateCities[0].id.toString());
+          }
+        } 
+      })
       .catch(() => {});
   }, []);
+  
+  // Get unique states for dropdown
+  const uniqueStates = Array.from(new Set(cities.map(c => c.state || 'Unknown')));
+  const availableCities = cities.filter(c => (c.state || 'Unknown') === selectedState);
+  
+  // Handle state change
+  const handleStateChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
+    const newState = e.target.value;
+    setSelectedState(newState);
+    const stateCities = cities.filter(c => (c.state || 'Unknown') === newState);
+    if (stateCities.length > 0) {
+      setCityId(stateCities[0].id.toString());
+    } else {
+      setCityId('');
+    }
+  };
 
   const selectedRole = ROLES.find(r => r.id === role)!;
 

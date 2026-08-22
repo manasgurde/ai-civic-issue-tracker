@@ -44,6 +44,9 @@ class CityDB(Base):
     __tablename__ = "cities"
     id = Column(Integer, primary_key=True, index=True)
     name = Column(String, unique=True, index=True)
+    state = Column(String, default="Unknown")
+    lat = Column(Float, default=0.0)
+    lng = Column(Float, default=0.0)
     created_at = Column(String, default=lambda: datetime.utcnow().isoformat())
 
 class UserDB(Base):
@@ -141,6 +144,9 @@ class UserPublic(BaseModel):
 class CityResponse(BaseModel):
     id: int
     name: str
+    state: str
+    lat: float
+    lng: float
     model_config = {"from_attributes": True}
 
 class Token(BaseModel):
@@ -474,9 +480,28 @@ def generate_health_scores():
 def start_scheduler():
     db = SessionLocal()
     try:
-        if db.query(CityDB).count() == 0:
-            default_city = CityDB(id=1, name="Bhopal, MP, India")
-            db.add(default_city)
+        if db.query(CityDB).count() <= 1:
+            # Update existing city 1 to proper format if needed
+            c1 = db.query(CityDB).filter(CityDB.id == 1).first()
+            if c1:
+                c1.name = "Bhopal"
+                c1.state = "Madhya Pradesh"
+                c1.lat = 23.2599
+                c1.lng = 77.4126
+            else:
+                c1 = CityDB(id=1, name="Bhopal", state="Madhya Pradesh", lat=23.2599, lng=77.4126)
+                db.add(c1)
+            
+            # Seed other cities
+            cities_data = [
+                {"name": "Indore", "state": "Madhya Pradesh", "lat": 22.7196, "lng": 75.8577},
+                {"name": "Mumbai", "state": "Maharashtra", "lat": 19.0760, "lng": 72.8777},
+                {"name": "Pune", "state": "Maharashtra", "lat": 18.5204, "lng": 73.8567},
+                {"name": "New Delhi", "state": "Delhi", "lat": 28.6139, "lng": 77.2090}
+            ]
+            for cdata in cities_data:
+                if not db.query(CityDB).filter(CityDB.name == cdata["name"]).first():
+                    db.add(CityDB(**cdata))
             db.commit()
         if db.query(ZoneHealthDB).count() == 0:
             generate_health_scores()
