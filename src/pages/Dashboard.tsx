@@ -155,6 +155,21 @@ export default function Dashboard() {
         </div>
       </div>
 
+      
+      {/* City Map */}
+      <div className="card" style={{ marginBottom: 20 }}>
+        <div className="card-header">
+          <div className="card-title">Issues in Your City</div>
+        </div>
+        <div style={{ padding: '0 20px 20px' }}>
+          <MapWidget 
+            center={user.city_lat && user.city_lng ? [user.city_lat, user.city_lng] : [23.2599, 77.4126]} 
+            complaints={complaints} 
+            height="250px" 
+          />
+        </div>
+      </div>
+
       {/* Tabs */}
       <div className="tabs">
         {[
