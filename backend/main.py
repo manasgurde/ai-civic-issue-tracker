@@ -131,6 +131,7 @@ class UserResponse(BaseModel):
     preferences: dict
     city_id: int
     city_name: Optional[str] = None
+    state_name: Optional[str] = None
     city_lat: Optional[float] = None
     city_lng: Optional[float] = None
     model_config = {"from_attributes": True}
@@ -269,6 +270,7 @@ def register(user: UserCreate, db: Session = Depends(get_db)):
         preferences=db_user.preferences or {},
         city_id=db_user.city_id,
         city_name=city.name if city else None,
+        state_name=city.state if city else None,
     )
 
 @app.post("/auth/login", response_model=Token)
@@ -290,6 +292,7 @@ def read_users_me(current_user: UserDB = Depends(get_current_user), db: Session 
         preferences=current_user.preferences or {},
         city_id=current_user.city_id,
         city_name=city.name if city else None,
+        state_name=city.state if city else None,
         city_lat=city.lat if city else None,
         city_lng=city.lng if city else None,
     )
@@ -299,7 +302,19 @@ def update_users_me(prefs: PreferencesUpdate, current_user: UserDB = Depends(get
     current_user.preferences = prefs.preferences
     db.commit()
     db.refresh(current_user)
-    return current_user
+    city = db.query(CityDB).filter(CityDB.id == current_user.city_id).first()
+    return UserResponse(
+        id=current_user.id,
+        email=current_user.email,
+        role=current_user.role,
+        name=current_user.name,
+        preferences=current_user.preferences or {},
+        city_id=current_user.city_id,
+        city_name=city.name if city else None,
+        state_name=city.state if city else None,
+        city_lat=city.lat if city else None,
+        city_lng=city.lng if city else None,
+    )
 
 @app.get("/auth/users", response_model=List[UserPublic])
 def list_users(role: Optional[str] = Query(None), current_user: UserDB = Depends(get_current_user), db: Session = Depends(get_db)):
