@@ -65,7 +65,7 @@ export default function Layout({ children, user, pageTitle, pageSubtitle }: Layo
           </div>
           <div>
             <div className="sidebar-brand-name">Civic Intelligence</div>
-            <div className="sidebar-brand-subtitle">Bhopal, MP</div>
+            <div className="sidebar-brand-subtitle">{user?.city_name ? `${user.city_name}, MP` : 'Bhopal, MP'}</div>
           </div>
         </Link>
 

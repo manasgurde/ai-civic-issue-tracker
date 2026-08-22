@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import Layout from '../components/Layout';
+import MapWidget from '../components/MapWidget';
 
 declare global {
   interface Window {
@@ -51,31 +52,6 @@ export default function MapView() {
 
   const initMap = () => {
     const L = window.L;
-    const mapEl = document.getElementById('civic-map');
-    if (!mapEl || (mapEl as any)._leaflet_id) return;
-
-    const map = L.map('civic-map').setView([23.2599, 77.4126], 13);
-    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-      attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>'
-    }).addTo(map);
-
-    // Bhopal, MP, India, IL mock complaints with coords
-    const mockLocations = [
-      { lat: 23.2580, lng: 77.4110, label: 'Pothole on Main St', status: 'in_progress', category: 'Roads' },
-      { lat: 23.2620, lng: 77.4150, label: 'Broken Streetlight', status: 'submitted', category: 'Electricity' },
-      { lat: 23.2550, lng: 77.4080, label: 'Garbage Overflow', status: 'resolved', category: 'Garbage' },
-      { lat: 23.2680, lng: 77.4200, label: 'Water Pipe Leak', status: 'in_progress', category: 'Water Supply' },
-      { lat: 23.2520, lng: 77.4180, label: 'Sidewalk Damage', status: 'submitted', category: 'Roads' },
-      { lat: 23.2570, lng: 77.4050, label: 'Park Bench Broken', status: 'resolved', category: 'Parks' },
-    ];
-
-    const colorMap: Record<string, string> = {
-      submitted: '#6B7280',
-      in_progress: '#2563EB',
-      resolved: '#16a34a',
-      duplicate: '#d97706',
-    };
-
     mockLocations.forEach(loc => {
       const color = colorMap[loc.status] || '#6B7280';
       const marker = L.circleMarker([loc.lat, loc.lng], {
@@ -95,12 +71,12 @@ export default function MapView() {
   if (!user) return null;
 
   return (
-    <Layout user={user} pageTitle="City Map" pageSubtitle="Live civic complaint heatmap for Bhopal, MP, India">
+    <Layout user={user} pageTitle="City Map" pageSubtitle={`Live civic complaint heatmap for ${user?.city_name || 'Bhopal'}, MP, India`}>
       <div className="page-header">
         <div className="page-header-row">
           <div>
             <h1 className="page-title">City Complaint Map</h1>
-            <p className="page-subtitle">Real-time visualization of civic issues across Bhopal, MP, India</p>
+            <p className="page-subtitle">Real-time visualization of civic issues across {user?.city_name || 'Bhopal'}, MP, India</p>
           </div>
           <div style={{ display: 'flex', gap: 8 }}>
             {['all', 'submitted', 'in_progress', 'resolved'].map(f => (
