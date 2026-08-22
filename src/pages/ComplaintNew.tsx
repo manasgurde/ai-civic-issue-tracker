@@ -44,19 +44,37 @@ export default function ComplaintNew() {
     return () => { try { document.head.removeChild(script); } catch {} };
   }, []);
 
-  const initMap = () => {
+  const initMap = async () => {
+      let centerLat = 23.2599;
+      let centerLng = 77.4126;
+      try {
+        const token = localStorage.getItem('token');
+        if (token) {
+          const res = await fetch(`${import.meta.env.VITE_API_URL || 'http://localhost:8000'}/users/me`, { headers: { Authorization: `Bearer ${token}` } });
+          if (res.ok) {
+            const userData = await res.json();
+            if (userData.city_lat && userData.city_lng) {
+              centerLat = userData.city_lat;
+              centerLng = userData.city_lng;
+              setLat(centerLat);
+              setLng(centerLng);
+            }
+          }
+        }
+      } catch (err) {}
+
     const L = window.L;
     if (!L) return;
     const mapEl = document.getElementById('location-map');
     if (!mapEl || (mapEl as any)._leaflet_id) return;
     
-    const map = L.map('location-map').setView([23.2599, 77.4126], 13);
+    const map = L.map('location-map').setView([centerLat, centerLng], 13);
     mapRef.current = map;
     L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
       attribution: '&copy; OpenStreetMap contributors'
     }).addTo(map);
 
-    const initialMarker = L.marker([23.2599, 77.4126], { draggable: true }).addTo(map);
+    const initialMarker = L.marker([centerLat, centerLng], { draggable: true }).addTo(map);
     markerRef.current = initialMarker;
 
     initialMarker.on('dragend', (e: any) => {
