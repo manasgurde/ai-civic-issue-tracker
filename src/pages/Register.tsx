@@ -182,11 +182,20 @@ export default function Register() {
               </div>
             )}
 
-            {cities.length > 0 && (
+            {uniqueStates.length > 0 && (
+              <div className="form-group">
+                <label className="form-label" htmlFor="reg-state">State</label>
+                <select id="reg-state" className="form-select" value={selectedState} onChange={handleStateChange}>
+                  {uniqueStates.map(state => <option key={state} value={state}>{state}</option>)}
+                </select>
+              </div>
+            )}
+
+            {availableCities.length > 0 && (
               <div className="form-group">
                 <label className="form-label" htmlFor="reg-city">City</label>
                 <select id="reg-city" className="form-select" value={cityId} onChange={e => setCityId(e.target.value)}>
-                  {cities.map((c: any) => <option key={c.id} value={c.id}>{c.name}</option>)}
+                  {availableCities.map(c => <option key={c.id} value={c.id}>{c.name}</option>)}
                 </select>
               </div>
             )}
