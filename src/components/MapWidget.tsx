@@ -64,8 +64,8 @@ export default function MapWidget({ center, complaints, height = '300px', zoom =
       <MapContainer center={center} zoom={zoom} scrollWheelZoom={false} style={{ height: '100%', width: '100%' }}>
         <ChangeView center={center} zoom={zoom} />
         <TileLayer
-          attribution='&copy; <a href=\"https://www.openstreetmap.org/copyright\">OpenStreetMap</a> contributors'
-          url=\"https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png\"
+          attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+          url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
         />
         {mapComplaints.map(c => (
           <Marker 
