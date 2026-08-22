@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import Layout from '../components/Layout';
+import MapWidget from '../components/MapWidget';
 
 const STATUS_COLORS: Record<string, string> = {
   submitted: 'badge-status-submitted',

@@ -131,6 +131,8 @@ class UserResponse(BaseModel):
     preferences: dict
     city_id: int
     city_name: Optional[str] = None
+    city_lat: Optional[float] = None
+    city_lng: Optional[float] = None
     model_config = {"from_attributes": True}
 
 class UserPublic(BaseModel):
@@ -288,6 +290,8 @@ def read_users_me(current_user: UserDB = Depends(get_current_user), db: Session 
         preferences=current_user.preferences or {},
         city_id=current_user.city_id,
         city_name=city.name if city else None,
+        city_lat=city.lat if city else None,
+        city_lng=city.lng if city else None,
     )
 
 @app.put("/users/me", response_model=UserResponse)

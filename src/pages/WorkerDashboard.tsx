@@ -1,6 +1,7 @@
 import { useEffect, useState, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
 import Layout from '../components/Layout';
+import MapWidget from '../components/MapWidget';
 
 const STATUS_BADGE: Record<string, string> = {
   submitted: 'badge-status-submitted',
@@ -119,7 +120,21 @@ export default function WorkerDashboard() {
         ))}
       </div>
 
-      <div className="card">
+      
+        <div className="card" style={{ marginBottom: 20 }}>
+          <div className="card-header">
+            <div className="card-title">Task Locations</div>
+          </div>
+          <div style={{ padding: '0 20px 20px' }}>
+            <MapWidget 
+              center={user.city_lat && user.city_lng ? [user.city_lat, user.city_lng] : [23.2599, 77.4126]} 
+              complaints={complaints} 
+              height="300px" 
+            />
+          </div>
+        </div>
+
+        <div className="card">
         <div className="card-header">
           <div className="card-title">Assigned Complaints</div>
           <span className="badge badge-primary">{total} total</span>

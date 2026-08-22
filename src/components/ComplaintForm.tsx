@@ -4,9 +4,28 @@ export default function ComplaintForm({ onComplaintAdded }: { onComplaintAdded: 
   const [title, setTitle] = useState('');
   const [description, setDescription] = useState('');
   const [category, setCategory] = useState('');
+  const [latitude, setLatitude] = useState<number | undefined>();
+  const [longitude, setLongitude] = useState<number | undefined>();
+  const [address, setAddress] = useState('');
   const [file, setFile] = useState<File | null>(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
+
+  
+  const handleGetLocation = () => {
+    if (navigator.geolocation) {
+      navigator.geolocation.getCurrentPosition(
+        (pos) => {
+          setLatitude(pos.coords.latitude);
+          setLongitude(pos.coords.longitude);
+          setAddress(`${pos.coords.latitude.toFixed(4)}, ${pos.coords.longitude.toFixed(4)}`);
+        },
+        () => {
+          setError('Could not get location.');
+        }
+      );
+    }
+  };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -23,7 +42,7 @@ export default function ComplaintForm({ onComplaintAdded }: { onComplaintAdded: 
           'Content-Type': 'application/json',
           'Authorization': `Bearer ${token}`
         },
-        body: JSON.stringify({ title, description, category })
+        body: JSON.stringify({ title, description, category, latitude, longitude, address })
       });
 
       if (!res.ok) throw new Error('Failed to create complaint');
@@ -46,6 +65,9 @@ export default function ComplaintForm({ onComplaintAdded }: { onComplaintAdded: 
       setDescription('');
       setCategory('');
       setFile(null);
+      setLatitude(undefined);
+      setLongitude(undefined);
+      setAddress('');
       onComplaintAdded();
     } catch (err: any) {
       setError(err.message);
@@ -80,6 +102,17 @@ export default function ComplaintForm({ onComplaintAdded }: { onComplaintAdded: 
           <option value="Water">Water</option>
           <option value="Other">Other</option>
         </select>
+        <div style={{ display: 'flex', gap: 10 }}>
+          <input 
+            placeholder="Address or Location" 
+            value={address} 
+            onChange={e => setAddress(e.target.value)} 
+            style={{ padding: 8, flex: 1 }}
+          />
+          <button type="button" onClick={handleGetLocation} style={{ padding: '8px 12px', background: '#e0e0e0', border: 'none', borderRadius: 4, cursor: 'pointer' }}>
+            <span className="material-symbols-outlined" style={{ fontSize: 18, verticalAlign: 'middle' }}>my_location</span>
+          </button>
+        </div>
         <input 
           type="file" 
           accept="image/*"

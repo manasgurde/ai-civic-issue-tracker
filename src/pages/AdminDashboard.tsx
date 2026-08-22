@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import Layout from '../components/Layout';
+import MapWidget from '../components/MapWidget';
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, PieChart, Pie, Cell } from 'recharts';
 
 const STATUS_LABELS: Record<string, string> = {
@@ -147,6 +148,20 @@ export default function AdminDashboard() {
                 </PieChart>
               </ResponsiveContainer>
             )}
+          </div>
+        </div>
+
+
+        <div className="card" style={{ gridColumn: '1 / -1' }}>
+          <div className="card-header">
+            <div className="card-title">City Map</div>
+          </div>
+          <div style={{ padding: '0 20px 20px' }}>
+            <MapWidget 
+              center={user.city_lat && user.city_lng ? [user.city_lat, user.city_lng] : [23.2599, 77.4126]} 
+              complaints={complaints} 
+              height="350px" 
+            />
           </div>
         </div>
 
